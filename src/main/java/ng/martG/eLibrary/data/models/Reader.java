@@ -1,13 +1,18 @@
 package ng.martG.eLibrary.data.models;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-public class Readers {
+@Document
+public class Reader {
 
+    @Id
     private String id;
-    private String name;
+    private String fullName;
     private String password;
-    private boolean isLoggedIn;
+    private String username;
+    private String email;
 
 }

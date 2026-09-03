@@ -1,4 +1,4 @@
-package ng.martG.eLibrary.dtos.Responses;
+package ng.martG.eLibrary.dtos.Responses.AuthReader;
 
 import lombok.Data;
 
@@ -6,5 +6,7 @@ import lombok.Data;
 public class RegisterReaderResponse {
 
     private String username;
+    private String fullName;
+    private String email;
 
 }
