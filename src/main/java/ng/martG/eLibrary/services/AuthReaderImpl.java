@@ -12,6 +12,7 @@ import ng.martG.eLibrary.dtos.Responses.AuthReader.RegisterReaderResponse;
 import ng.martG.eLibrary.utils.AuthMappers.AuthReaderMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -22,12 +23,18 @@ public class AuthReaderImpl implements AuthReaderService{
 
     @Override
     public RegisterReaderResponse registerReader(RegisterReaderRequest readerRequest) {
-        Optional<Reader> exiting_reader = readerRepository.findReaderByUsername(readerRequest.getUsername());
+        RegisterReaderRequest request = AuthReaderMapper.validateRegisterRequest(readerRequest);
 
-        if (exiting_reader.isPresent())
-            throw new IllegalArgumentException("Username already exist");
+        if (!request.getEmail().toLowerCase(Locale.ROOT).endsWith("@gmail.com"))
+            throw new IllegalArgumentException("Email must be a gmail address");
 
-        Reader reader = AuthReaderMapper.mapToRegisterRequest(readerRequest);
+        if (readerRepository.findReaderByUsername(request.getUsername().toLowerCase(Locale.ROOT)).isPresent())
+            throw new IllegalArgumentException("Username already exists");
+
+        if (readerRepository.findReaderByEmail(request.getEmail().toLowerCase(Locale.ROOT)).isPresent())
+                throw new IllegalArgumentException("Email already exists");
+
+        Reader reader = AuthReaderMapper.mapToRegisterRequest(request);
         readerRepository.save(reader);
 
         return AuthReaderMapper.mapToRegisterResponse(reader);
@@ -36,7 +43,31 @@ public class AuthReaderImpl implements AuthReaderService{
 
     @Override
     public LoginReaderResponse loginReader(LoginReaderRequest readerRequest) {
-        return null;
+        LoginReaderRequest request = AuthReaderMapper.validateRequest(readerRequest);
+        String usernameOrEmail = request.getUsernameOrEmail().toLowerCase(Locale.ROOT);
+
+        Optional<Reader> existingReader;
+
+        if (usernameOrEmail.endsWith("@gmail.com")) {
+            existingReader = readerRepository.findReaderByEmail(usernameOrEmail);
+        }
+
+        else {
+            existingReader = readerRepository.findReaderByUsername(usernameOrEmail);
+        }
+
+        if (existingReader.isEmpty())
+            throw new IllegalArgumentException("Wrong email or username");
+
+        Reader reader = existingReader.get();
+
+        if (!reader.getPassword().equals(request.getPassword()))
+            throw new IllegalArgumentException("Invalid password!!!");
+
+        reader.setLoggedIn(true);
+        readerRepository.save(reader);
+
+        return AuthReaderMapper.mapToLoginResponse(reader);
     }
 
     @Override

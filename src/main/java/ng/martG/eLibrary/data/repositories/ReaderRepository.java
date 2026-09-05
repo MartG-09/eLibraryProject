@@ -8,8 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface ReaderRepository extends MongoRepository<Reader, String> {
-
     Optional<Reader> findReaderByEmail(String email);
 
     Optional<Reader> findReaderByUsername(String username);
+
 }

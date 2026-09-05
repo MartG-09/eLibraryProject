@@ -13,5 +13,7 @@ public class Librarian {
     private String fullName;
     private String password;
     private String username;
+    private String email;
+    private boolean isLoggedIn;
 
 }
