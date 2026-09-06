@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class LogoutReaderRequest {
 
-    private String username;
+    private String usernameOrEmail;
 
 }

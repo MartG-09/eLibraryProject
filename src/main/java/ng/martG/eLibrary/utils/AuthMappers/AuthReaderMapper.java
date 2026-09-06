@@ -4,6 +4,7 @@ import ng.martG.eLibrary.data.models.Reader;
 import ng.martG.eLibrary.dtos.Requests.AuthReader.LoginReaderRequest;
 import ng.martG.eLibrary.dtos.Requests.AuthReader.RegisterReaderRequest;
 import ng.martG.eLibrary.dtos.Responses.AuthReader.LoginReaderResponse;
+import ng.martG.eLibrary.dtos.Responses.AuthReader.LogoutReaderResponse;
 import ng.martG.eLibrary.dtos.Responses.AuthReader.RegisterReaderResponse;
 
 import java.util.Locale;
@@ -31,6 +32,9 @@ public class AuthReaderMapper {
 
         if (readerRequest.getPassword().isBlank())
             throw new IllegalArgumentException("Enter your password");
+
+        if (readerRequest.getFullName().isBlank())
+            throw new IllegalArgumentException("Enter a valid full name");
 
         return readerRequest;
 
@@ -62,6 +66,14 @@ public class AuthReaderMapper {
         response.setEmail(reader.getEmail());
         response.setUsername(reader.getUsername());
         response.setLoggedIn(reader.isLoggedIn());
+
+        return response;
+    }
+
+    public static LogoutReaderResponse mapToLogoutResponse(Reader reader) {
+        LogoutReaderResponse response = new LogoutReaderResponse();
+        response.setUsername(reader.getUsername());
+        response.setLoggedIn(false);
 
         return response;
     }

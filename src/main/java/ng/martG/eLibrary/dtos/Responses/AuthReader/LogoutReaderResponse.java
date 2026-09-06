@@ -6,5 +6,6 @@ import lombok.Data;
 public class LogoutReaderResponse {
 
     private String username;
+    private boolean loggedIn;
 
 }

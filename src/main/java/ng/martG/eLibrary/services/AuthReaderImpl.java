@@ -72,7 +72,29 @@ public class AuthReaderImpl implements AuthReaderService{
 
     @Override
     public LogoutReaderResponse logoutReader(LogoutReaderRequest readerRequest) {
-        return null;
+        Optional<Reader> existingReader;
+
+        if (readerRequest.getUsernameOrEmail().isBlank())
+            throw new IllegalArgumentException("Enter your email");
+
+        if (readerRequest.getUsernameOrEmail().toLowerCase(Locale.ROOT).endsWith("@gmail.com"))
+            existingReader =  readerRepository.findReaderByEmail(readerRequest.getUsernameOrEmail().toLowerCase(Locale.ROOT));
+
+        else {
+            existingReader = readerRepository.findReaderByUsername(readerRequest.getUsernameOrEmail().toLowerCase(Locale.ROOT));
+        }
+
+        if (existingReader.isEmpty())
+            throw new IllegalArgumentException("Wrong email or username");
+
+        Reader reader = existingReader.get();
+
+        reader.setLoggedIn(false);
+        readerRepository.save(reader);
+
+        return AuthReaderMapper.mapToLogoutResponse(reader);
+
+
     }
 
 }

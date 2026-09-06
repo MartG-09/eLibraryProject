@@ -1,0 +1,4 @@
+package ng.martG.eLibrary.dtos.Requests.AuthLibrarian;
+
+public class LoginLibrarianRequest {
+}
