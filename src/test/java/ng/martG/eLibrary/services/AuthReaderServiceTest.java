@@ -1,12 +1,13 @@
 package ng.martG.eLibrary.services;
 
 import ng.martG.eLibrary.data.repositories.ReaderRepository;
-import ng.martG.eLibrary.dtos.Requests.AuthReader.LoginReaderRequest;
-import ng.martG.eLibrary.dtos.Requests.AuthReader.LogoutReaderRequest;
-import ng.martG.eLibrary.dtos.Requests.AuthReader.RegisterReaderRequest;
-import ng.martG.eLibrary.dtos.Responses.AuthReader.LoginReaderResponse;
-import ng.martG.eLibrary.dtos.Responses.AuthReader.LogoutReaderResponse;
-import ng.martG.eLibrary.dtos.Responses.AuthReader.RegisterReaderResponse;
+import ng.martG.eLibrary.dtos.requests.authReader.LoginReaderRequest;
+import ng.martG.eLibrary.dtos.requests.authReader.LogoutReaderRequest;
+import ng.martG.eLibrary.dtos.requests.authReader.RegisterReaderRequest;
+import ng.martG.eLibrary.dtos.responses.authReader.LoginReaderResponse;
+import ng.martG.eLibrary.dtos.responses.authReader.LogoutReaderResponse;
+import ng.martG.eLibrary.dtos.responses.authReader.RegisterReaderResponse;
+import ng.martG.eLibrary.services.auth.AuthReaderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class AuthReaderServiceTest {
     }
 
     @Test
-    public void testThatReaderRegistersWithEmailNotEndingWithAtGmailDotcom_AndReaderIsRegistered() {
+    public void testThatReaderRegistersWithEmailNotEndingWithAtGmailDotcom_AndReaderIsNotRegistered() {
         readerRepository.deleteAll();
         RegisterReaderRequest register = new RegisterReaderRequest();
         register.setFullName("Heaven kay");
@@ -159,6 +160,7 @@ public class AuthReaderServiceTest {
         assertThrows(IllegalArgumentException.class , () -> service.registerReader(register));
 
         assertEquals(0 , readerRepository.count());
+
     }
 
     @Test
@@ -192,7 +194,7 @@ public class AuthReaderServiceTest {
     }
 
     @Test
-    public void testThatReaderLoginWithBlankEmailOrUsernameAndPassword_ReaderIsLoggedin() {
+    public void testThatReaderLoginWithBlankEmailOrUsernameAndPassword_ReaderIsNotLoggedin() {
         service.registerReader(register);
 
         LoginReaderRequest login = new LoginReaderRequest();
@@ -244,7 +246,7 @@ public class AuthReaderServiceTest {
     }
 
     @Test
-    public void testThatReaderLogin_ReaderIsLoggedIn_ReaderLogoutWithUsernam_ReaderIsLoggedOut() {
+    public void testThatReaderLogin_ReaderIsLoggedIn_ReaderLogoutWithUsername_ReaderIsLoggedOut() {
         service.registerReader(register);
 
         LoginReaderRequest login = new LoginReaderRequest();
