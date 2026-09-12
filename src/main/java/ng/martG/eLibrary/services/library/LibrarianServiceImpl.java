@@ -6,7 +6,11 @@ import ng.martG.eLibrary.data.models.Librarian;
 import ng.martG.eLibrary.data.repositories.BookRepository;
 import ng.martG.eLibrary.data.repositories.LibrarianRepository;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.AddBookRequest;
+import ng.martG.eLibrary.dtos.requests.librarianRequest.DeleteBookRequest;
+import ng.martG.eLibrary.dtos.requests.librarianRequest.FindBookByIdRequest;
 import ng.martG.eLibrary.dtos.responses.librarianResponse.AddBookResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.DeleteBookResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.FindBookByIdResponse;
 import ng.martG.eLibrary.utils.librarianMappers.BookMapper;
 import ng.martG.eLibrary.utils.validator.ValidateAddBookRequest;
 import org.springframework.stereotype.Service;
@@ -49,4 +53,22 @@ public class LibrarianServiceImpl implements LibrarianService {
 
         return BookMapper.mapToAddBookResponse(book);
     }
+
+    @Override
+    public DeleteBookResponse deleteBook(DeleteBookRequest request) {
+        return null;
+    }
+
+    @Override
+    public FindBookByIdResponse findBookById(FindBookByIdRequest request) {
+        Optional<Book> existingBook = bookRepository.findById(request.getId());
+
+        if (existingBook.isEmpty())
+            throw new IllegalArgumentException("Book not found");
+
+        Book book = existingBook.get();
+
+        return BookMapper.mapToFindBookByIdResponse(book);
+    }
+
 }

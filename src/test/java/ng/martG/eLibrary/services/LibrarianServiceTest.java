@@ -9,6 +9,7 @@ import ng.martG.eLibrary.dtos.requests.librarianRequest.AddBookRequest;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.LoginLibrarianResponse;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.LogoutLibrarianResponse;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.RegisterLibrarianResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.AddBookResponse;
 import ng.martG.eLibrary.services.auth.AuthLibrarianService;
 import ng.martG.eLibrary.services.library.LibrarianService;
 import org.junit.jupiter.api.BeforeEach;
@@ -214,8 +215,9 @@ public class LibrarianServiceTest {
         add.setDescription("For seniors engineers");
         add.setTotalCopies(5);
 
-        service.addBook(add);
+        AddBookResponse book = service.addBook(add);
         assertEquals(1, bookRepository.count());
+        assertEquals("Clean Code", book.getTitle());
 
         add.setUsernameOrEmail("libra_09");
         add.setTitle("Clean Code");
@@ -225,6 +227,35 @@ public class LibrarianServiceTest {
         add.setTotalCopies(3);
         service.addBook(add);
         assertEquals(2, bookRepository.count());
+
+    }
+
+    @Test
+    public void testThatLibrarianIsLoggedIn_LibrarianAddsBook_BookIsAdded_LibrarianFindsBookById_BookIsFound() {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse book = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+        assertEquals("Clean Code", book.getTitle());
+
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Money bank");
+        add.setAuthor("Ariyo Ryan");
+        add.setCategory("Business");
+        add.setDescription("For begineers in business");
+        add.setTotalCopies(2);
+        book = service.addBook(add);
+        assertEquals(2, bookRepository.count());
+        assertEquals("Money bank", book.getTitle());
 
     }
 }

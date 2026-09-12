@@ -4,6 +4,7 @@ import ng.martG.eLibrary.data.models.Book;
 import ng.martG.eLibrary.data.models.BookStatus;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.AddBookRequest;
 import ng.martG.eLibrary.dtos.responses.librarianResponse.AddBookResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.FindBookByIdResponse;
 
 public class BookMapper {
 
@@ -31,6 +32,21 @@ public class BookMapper {
         response.setAvailableCopies(book.getAvailableCopies());
 
         return response;
+    }
+
+    public static FindBookByIdResponse mapToFindBookByIdResponse(Book book) {
+        FindBookByIdResponse response = new FindBookByIdResponse();
+        response.setBookId(book.getId());
+        response.setTitle(book.getTitle());
+        response.setAuthor(book.getAuthor());
+        response.setCategory(book.getCategory());
+        response.setDescription(book.getDescription());
+        response.setTotalCopies(book.getTotalCopies());
+        response.setAvailableCopies(book.getAvailableCopies());
+        response.setBookStatus(book.getStatus());
+
+        return response;
+
     }
 
 }
