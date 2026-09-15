@@ -75,7 +75,7 @@ public class AuthLibrarianImpl implements AuthLibrarianService {
     public LogoutLibrarianResponse logoutLibrarian(LogoutLibrarianRequest librarianRequest) {
         Optional<Librarian> existingLibrarian;
 
-        if (librarianRequest.getUsernameOrEmail().isBlank())
+        if (librarianRequest.getUsernameOrEmail() == null || librarianRequest.getUsernameOrEmail().isBlank())
             throw new IllegalArgumentException("Enter your email");
 
         if (librarianRequest.getUsernameOrEmail().toLowerCase(Locale.ROOT).endsWith("@gmail.com"))

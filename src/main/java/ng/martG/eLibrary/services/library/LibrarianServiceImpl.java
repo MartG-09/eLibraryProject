@@ -8,11 +8,15 @@ import ng.martG.eLibrary.data.repositories.LibrarianRepository;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.AddBookRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.DeleteBookRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.FindBookByIdRequest;
+import ng.martG.eLibrary.dtos.requests.librarianRequest.UpdateBookRequest;
 import ng.martG.eLibrary.dtos.responses.librarianResponse.AddBookResponse;
 import ng.martG.eLibrary.dtos.responses.librarianResponse.DeleteBookResponse;
 import ng.martG.eLibrary.dtos.responses.librarianResponse.FindBookByIdResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.UpdateBookResponse;
 import ng.martG.eLibrary.utils.librarianMappers.BookMapper;
 import ng.martG.eLibrary.utils.validator.ValidateAddBookRequest;
+import ng.martG.eLibrary.utils.validator.ValidateLibrarianRequest;
+import ng.martG.eLibrary.utils.validator.ValidateUpdateBookRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
@@ -56,7 +60,16 @@ public class LibrarianServiceImpl implements LibrarianService {
 
     @Override
     public DeleteBookResponse deleteBook(DeleteBookRequest request) {
-        return null;
+        Optional<Book> existingBook = bookRepository.findById(request.getId());
+
+        if (existingBook.isEmpty())
+            throw new IllegalArgumentException("Book not found");
+
+        Book book = existingBook.get();
+        bookRepository.delete(existingBook.get());
+
+        return BookMapper.mapToDeleteBookResponse(book);
+
     }
 
     @Override
@@ -69,6 +82,22 @@ public class LibrarianServiceImpl implements LibrarianService {
         Book book = existingBook.get();
 
         return BookMapper.mapToFindBookByIdResponse(book);
+    }
+
+    @Override
+    public UpdateBookResponse updateBook(UpdateBookRequest request) {
+        Optional<Book> existingBook = bookRepository.findById(request.getId());
+
+        if (existingBook.isEmpty())
+            throw new IllegalArgumentException("Book not found");
+
+        UpdateBookRequest bookRequest = ValidateUpdateBookRequest.validateUpdateBookRequest(request);
+        Book book = existingBook.get();
+
+        BookMapper.mapToUpdateBookRequest(bookRequest ,  book);
+        bookRepository.save(book);
+
+        return BookMapper.mapToUpdateBookResponse(book);
     }
 
 }

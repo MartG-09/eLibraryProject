@@ -11,7 +11,7 @@ import java.util.UUID;
 public class Book {
 
     @Id
-    private UUID id;
+    private UUID id = UUID.randomUUID();
     private String title;
     private String author;
     private String category;

@@ -10,5 +10,5 @@ import java.util.UUID;
 @Repository
 public interface BookRepository extends MongoRepository<Book, UUID> {
 
-    Optional<Object> findByTitleAndAuthor(String title, String author);
+    Optional<Book> findByTitleAndAuthor(String title, String author);
 }

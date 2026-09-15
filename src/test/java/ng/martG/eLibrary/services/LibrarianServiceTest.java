@@ -6,10 +6,14 @@ import ng.martG.eLibrary.dtos.requests.authLibrarian.LoginLibrarianRequest;
 import ng.martG.eLibrary.dtos.requests.authLibrarian.LogoutLibrarianRequest;
 import ng.martG.eLibrary.dtos.requests.authLibrarian.RegisterLibrarianRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.AddBookRequest;
+import ng.martG.eLibrary.dtos.requests.librarianRequest.DeleteBookRequest;
+import ng.martG.eLibrary.dtos.requests.librarianRequest.FindBookByIdRequest;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.LoginLibrarianResponse;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.LogoutLibrarianResponse;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.RegisterLibrarianResponse;
 import ng.martG.eLibrary.dtos.responses.librarianResponse.AddBookResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.DeleteBookResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.FindBookByIdResponse;
 import ng.martG.eLibrary.services.auth.AuthLibrarianService;
 import ng.martG.eLibrary.services.library.LibrarianService;
 import org.junit.jupiter.api.BeforeEach;
@@ -253,9 +257,95 @@ public class LibrarianServiceTest {
         add.setCategory("Business");
         add.setDescription("For begineers in business");
         add.setTotalCopies(2);
-        book = service.addBook(add);
+        AddBookResponse newBook = service.addBook(add);
         assertEquals(2, bookRepository.count());
-        assertEquals("Money bank", book.getTitle());
+        assertEquals("Money bank", newBook.getTitle());
+
+        FindBookByIdRequest findBook = new FindBookByIdRequest();
+        findBook.setId(book.getId());
+
+        FindBookByIdResponse foundBook = service.findBookById(findBook);
+        assertEquals(book.getTitle() , foundBook.getTitle());
+        assertEquals(book.getAuthor() , foundBook.getAuthor());
+        assertEquals(book.getStatus() , foundBook.getBookStatus());
 
     }
+
+     @Test
+    public void testThatLibrarianIsLoggedIn_LibrarianAddsBook_BookIsAdded_LibrarianDeletesBookById_BookCannotbeFound() {
+         assertTrue(loginResponse.isLoggedIn());
+
+         bookRepository.deleteAll();
+         AddBookRequest add = new AddBookRequest();
+         add.setUsernameOrEmail("libra_09");
+         add.setTitle("Clean Code");
+         add.setAuthor("Robert C Martins");
+         add.setCategory("Software");
+         add.setDescription("For seniors engineers");
+         add.setTotalCopies(5);
+
+         AddBookResponse book = service.addBook(add);
+         assertEquals(1, bookRepository.count());
+         assertEquals("Clean Code", book.getTitle());
+
+         add.setUsernameOrEmail("libra_09");
+         add.setTitle("Money bank");
+         add.setAuthor("Ariyo Ryan");
+         add.setCategory("Business");
+         add.setDescription("For begineers in business");
+         add.setTotalCopies(2);
+         AddBookResponse newBook = service.addBook(add);
+         assertEquals(2, bookRepository.count());
+         assertEquals("Money bank", newBook.getTitle());
+
+         DeleteBookRequest deleteBook = new DeleteBookRequest();
+         deleteBook.setId(book.getId());
+
+         DeleteBookResponse removedBook = service.deleteBook(deleteBook);
+         assertEquals(1, bookRepository.count());
+
+         assertEquals("Clean Code", removedBook.getTitle());
+         assertEquals("Robert C Martins", removedBook.getAuthor());
+
+     }
+
+     @Test
+    public void testThatLibrarianIsLoggedIn_LibrarianAddsBook_BookIsAdded_LibrarianDeletesBookById_FindBookById_ItThrowAnException() {
+         assertTrue(loginResponse.isLoggedIn());
+
+         bookRepository.deleteAll();
+         AddBookRequest add = new AddBookRequest();
+         add.setUsernameOrEmail("libra_09");
+         add.setTitle("Clean Code");
+         add.setAuthor("Robert C Martins");
+         add.setCategory("Software");
+         add.setDescription("For seniors engineers");
+         add.setTotalCopies(5);
+
+         AddBookResponse book = service.addBook(add);
+         assertEquals(1, bookRepository.count());
+         assertEquals("Clean Code", book.getTitle());
+
+         add.setUsernameOrEmail("libra_09");
+         add.setTitle("Money bank");
+         add.setAuthor("Ariyo Ryan");
+         add.setCategory("Business");
+         add.setDescription("For begineers in business");
+         add.setTotalCopies(2);
+         AddBookResponse newBook = service.addBook(add);
+         assertEquals(2, bookRepository.count());
+         assertEquals("Money bank", newBook.getTitle());
+
+         DeleteBookRequest deleteBook = new DeleteBookRequest();
+         deleteBook.setId(book.getId());
+
+         service.deleteBook(deleteBook);
+         assertEquals(1, bookRepository.count());
+
+         FindBookByIdRequest findBookById = new FindBookByIdRequest();
+         findBookById.setId(book.getId());
+
+         assertThrows(IllegalArgumentException.class , ()-> service.findBookById(findBookById));
+
+     }
 }

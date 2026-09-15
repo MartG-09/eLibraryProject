@@ -6,17 +6,17 @@ import ng.martG.eLibrary.dtos.requests.authReader.RegisterReaderRequest;
 public class ValidateReaderRequest {
 
     public static RegisterReaderRequest validateRegisterRequest(RegisterReaderRequest readerRequest) {
-        if (readerRequest.getEmail().isBlank())
+        if (readerRequest.getEmail() == null || readerRequest.getEmail().isBlank())
             throw new IllegalArgumentException("Enter a valid email");
 
 
-        if (readerRequest.getUsername().isBlank())
+        if (readerRequest.getUsername() == null || readerRequest.getUsername().isBlank())
             throw new IllegalArgumentException("Enter a valid username");
 
-        if (readerRequest.getPassword().isBlank())
+        if (readerRequest.getPassword() == null || readerRequest.getPassword().isBlank())
             throw new IllegalArgumentException("Enter your password");
 
-        if (readerRequest.getFullName().isBlank())
+        if (readerRequest.getFullName() == null || readerRequest.getFullName().isBlank())
             throw new IllegalArgumentException("Enter a valid full name");
 
         return readerRequest;
@@ -24,10 +24,10 @@ public class ValidateReaderRequest {
     }
 
     public static LoginReaderRequest validateRequest(LoginReaderRequest loginRequest) {
-        if (loginRequest.getUsernameOrEmail().isBlank())
+        if (loginRequest.getUsernameOrEmail() == null || loginRequest.getUsernameOrEmail().isBlank())
             throw new IllegalArgumentException("Enter a valid username or email");
 
-        if (loginRequest.getPassword().isBlank())
+        if (loginRequest.getPassword() == null || loginRequest.getPassword().isBlank())
             throw new IllegalArgumentException("Enter your password");
 
         return loginRequest;

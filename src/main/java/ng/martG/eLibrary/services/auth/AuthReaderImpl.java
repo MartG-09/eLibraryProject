@@ -75,7 +75,7 @@ public class AuthReaderImpl implements AuthReaderService{
     public LogoutReaderResponse logoutReader(LogoutReaderRequest readerRequest) {
         Optional<Reader> existingReader;
 
-        if (readerRequest.getUsernameOrEmail().isBlank())
+        if (readerRequest.getUsernameOrEmail() == null || readerRequest.getUsernameOrEmail().isBlank())
             throw new IllegalArgumentException("Enter your email");
 
         if (readerRequest.getUsernameOrEmail().toLowerCase(Locale.ROOT).endsWith("@gmail.com"))
