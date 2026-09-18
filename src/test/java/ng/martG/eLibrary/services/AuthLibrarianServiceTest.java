@@ -10,6 +10,9 @@ import ng.martG.eLibrary.dtos.responses.authLibrarian.RegisterLibrarianResponse;
 import ng.martG.eLibrary.services.auth.AuthLibrarianService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -106,11 +109,13 @@ public class AuthLibrarianServiceTest {
 
     }
 
-    @Test
-    public  void testThatALibrarianRegistersInputingBlankValueInFullname_LibrarianIsNotRegister() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    public  void testThatALibrarianRegistersInputingBlankValueInFullname_LibrarianIsNotRegister(String fullname) {
         librarianRepository.deleteAll();
         RegisterLibrarianRequest register = new RegisterLibrarianRequest();
-        register.setFullName("");
+        register.setFullName(fullname);
         register.setUsername("martg_09");
         register.setPassword("correct");
         register.setEmail("ajulogbemi09@gmail.com");
@@ -121,12 +126,14 @@ public class AuthLibrarianServiceTest {
 
     }
 
-    @Test
-    public  void testThatALibrarianRegistersInputingBlankValueInUsername_LibrarianIsNotRegister() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    public  void testThatALibrarianRegistersInputingBlankValueInUsername_LibrarianIsNotRegister(String username) {
         librarianRepository.deleteAll();
         RegisterLibrarianRequest register = new RegisterLibrarianRequest();
         register.setFullName("Heaven kay");
-        register.setUsername("   ");
+        register.setUsername(username);
         register.setPassword("correct");
         register.setEmail("ajulogbemi09@gmail");
 
@@ -136,13 +143,15 @@ public class AuthLibrarianServiceTest {
 
     }
 
-    @Test
-    public  void testThatALibrarianRegistersInputingBlankValueInPassword_LibrarianIsNotRegister() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    public  void testThatALibrarianRegistersInputingBlankValueInPassword_LibrarianIsNotRegister(String password) {
         librarianRepository.deleteAll();
         RegisterLibrarianRequest register = new RegisterLibrarianRequest();
         register.setFullName("Heaven kay");
         register.setUsername("maht_j");
-        register.setPassword("");
+        register.setPassword(password);
         register.setEmail("ajulogbemi09@gmail");
 
         assertThrows(IllegalArgumentException.class , () -> service.registerLibrarian(register));
@@ -151,14 +160,16 @@ public class AuthLibrarianServiceTest {
 
     }
 
-    @Test
-    public  void testThatALibrarianRegistersInputingBlankValueInEmail_LibrarianIsNotRegister() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    public  void testThatALibrarianRegistersInputingBlankValueInEmail_LibrarianIsNotRegister(String email) {
         librarianRepository.deleteAll();
         RegisterLibrarianRequest register = new RegisterLibrarianRequest();
         register.setFullName("Heaven kay");
         register.setUsername("maht_j");
         register.setPassword("correct");
-        register.setEmail("  ");
+        register.setEmail(email);
 
         assertThrows(IllegalArgumentException.class , () -> service.registerLibrarian(register));
 
@@ -194,27 +205,31 @@ public class AuthLibrarianServiceTest {
 
     }
 
-    @Test
-    public void testThatLibrarianLoginWithBlankEmailOrUsernameAndPassword_LibrarianIsNotLoggedin() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    public void testThatLibrarianLoginWithBlankEmailOrUsernameAndPassword_LibrarianIsNotLoggedin(String usernameOrEmail) {
         service.registerLibrarian(register);
 
         LoginLibrarianRequest login = new LoginLibrarianRequest();
 
-        login.setUsernameOrEmail("");
+        login.setUsernameOrEmail(usernameOrEmail);
         login.setPassword("correct");
 
         assertThrows(IllegalArgumentException.class ,()-> service.loginLibrarian(login));
 
     }
 
-    @Test
-    public void testThatLibrarianLoginWithUsernameAndBlankPassword_LibrarianIsLoggedin() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    public void testThatLibrarianLoginWithUsernameAndBlankPassword_LibrarianIsLoggedin(String password) {
         service.registerLibrarian(register);
 
         LoginLibrarianRequest login = new LoginLibrarianRequest();
 
         login.setUsernameOrEmail("martg_09");
-        login.setPassword("   ");
+        login.setPassword(password);
 
         assertThrows(IllegalArgumentException.class ,()-> service.loginLibrarian(login));
 
@@ -307,8 +322,10 @@ public class AuthLibrarianServiceTest {
 
     }
 
-    @Test
-    public void testThatLibrarianLogin_LibrarianIsLoggedIn_LibrarianLogoutWithBlankEmailOrUsername_LibrarianIsLoggedOut() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    public void testThatLibrarianLogin_LibrarianIsLoggedIn_LibrarianLogoutWithBlankEmailOrUsername_AnExceptionIsThrown(String usernameOrEmail) {
         service.registerLibrarian(register);
 
         LoginLibrarianRequest login = new LoginLibrarianRequest();
@@ -320,7 +337,7 @@ public class AuthLibrarianServiceTest {
         assertTrue(response.isLoggedIn());
 
         LogoutLibrarianRequest logout = new LogoutLibrarianRequest();
-        logout.setUsernameOrEmail("");
+        logout.setUsernameOrEmail(usernameOrEmail);
 
         assertThrows(IllegalArgumentException.class , ()-> service.logoutLibrarian(logout));
 

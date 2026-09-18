@@ -8,16 +8,18 @@ import ng.martG.eLibrary.dtos.requests.authLibrarian.RegisterLibrarianRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.AddBookRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.DeleteBookRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.FindBookByIdRequest;
+import ng.martG.eLibrary.dtos.requests.librarianRequest.UpdateBookRequest;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.LoginLibrarianResponse;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.LogoutLibrarianResponse;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.RegisterLibrarianResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.AddBookResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.DeleteBookResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.FindBookByIdResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.*;
 import ng.martG.eLibrary.services.auth.AuthLibrarianService;
 import ng.martG.eLibrary.services.library.LibrarianService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -120,15 +122,17 @@ public class LibrarianServiceTest {
 
     }
 
-    @Test
-    public void testThatLibrarianIsLoggedIn_ButPassBlankValuesAsAuthor_LibrarianAddBook_AnExceptionIsThrown() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public void testThatLibrarianIsLoggedIn_ButPassBlankValuesAsAuthor_LibrarianAddBook_AnExceptionIsThrown(String author) {
         assertTrue(loginResponse.isLoggedIn());
 
         bookRepository.deleteAll();
         AddBookRequest add = new AddBookRequest();
         add.setUsernameOrEmail("libra_09");
         add.setTitle("Clean Code");
-        add.setAuthor("");
+        add.setAuthor(author);
         add.setCategory("Software");
         add.setDescription("For seniors engineers");
         add.setTotalCopies(5);
@@ -137,14 +141,16 @@ public class LibrarianServiceTest {
 
     }
 
-    @Test
-    public void testThatLibrarianIsLoggedIn_ButPassBlankValuesAsTitle_LibrarianAddBook_AnExceptionIsThrown() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public void testThatLibrarianIsLoggedIn_ButPassBlankValuesAsTitle_LibrarianAddBook_AnExceptionIsThrown(String title) {
         assertTrue(loginResponse.isLoggedIn());
 
         bookRepository.deleteAll();
         AddBookRequest add = new AddBookRequest();
         add.setUsernameOrEmail("libra_09");
-        add.setTitle("");
+        add.setTitle(title);
         add.setAuthor("Robert C Martins");
         add.setCategory("Software");
         add.setDescription("For seniors engineers");
@@ -154,8 +160,10 @@ public class LibrarianServiceTest {
 
     }
 
-    @Test
-    public void testThatLibrarianIsLoggedIn_ButPassBlankValuesAsCategory_LibrarianAddBook_AnExceptionIsThrown() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public void testThatLibrarianIsLoggedIn_ButPassBlankValuesAsCategory_LibrarianAddBook_AnExceptionIsThrown(String category) {
         assertTrue(loginResponse.isLoggedIn());
 
         bookRepository.deleteAll();
@@ -163,7 +171,7 @@ public class LibrarianServiceTest {
         add.setUsernameOrEmail("libra_09");
         add.setTitle("Clean Code");
         add.setAuthor("Robert C Martins");
-        add.setCategory("");
+        add.setCategory(category);
         add.setDescription("For seniors engineers");
         add.setTotalCopies(5);
 
@@ -171,8 +179,10 @@ public class LibrarianServiceTest {
 
     }
 
-    @Test
-    public void testThatLibrarianIsLoggedIn_ButPassBlankValuesAsDescription_LibrarianAddBook() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public void testThatLibrarianIsLoggedIn_ButPassBlankValuesAsDescription_LibrarianAddBook(String description) {
         assertTrue(loginResponse.isLoggedIn());
 
         bookRepository.deleteAll();
@@ -181,7 +191,7 @@ public class LibrarianServiceTest {
         add.setTitle("Clean Code");
         add.setAuthor("Robert C Martins");
         add.setCategory("Software");
-        add.setDescription("");
+        add.setDescription(description);
         add.setTotalCopies(5);
 
         service.addBook(add);
@@ -198,7 +208,7 @@ public class LibrarianServiceTest {
         add.setUsernameOrEmail("libra_09");
         add.setTitle("Clean Code");
         add.setAuthor("Robert C Martins");
-        add.setCategory("");
+        add.setCategory("Science");
         add.setDescription("For seniors engineers");
         add.setTotalCopies(0);
 
@@ -271,7 +281,7 @@ public class LibrarianServiceTest {
 
     }
 
-     @Test
+    @Test
     public void testThatLibrarianIsLoggedIn_LibrarianAddsBook_BookIsAdded_LibrarianDeletesBookById_BookCannotbeFound() {
          assertTrue(loginResponse.isLoggedIn());
 
@@ -307,9 +317,9 @@ public class LibrarianServiceTest {
          assertEquals("Clean Code", removedBook.getTitle());
          assertEquals("Robert C Martins", removedBook.getAuthor());
 
-     }
+    }
 
-     @Test
+    @Test
     public void testThatLibrarianIsLoggedIn_LibrarianAddsBook_BookIsAdded_LibrarianDeletesBookById_FindBookById_ItThrowAnException() {
          assertTrue(loginResponse.isLoggedIn());
 
@@ -347,5 +357,431 @@ public class LibrarianServiceTest {
 
          assertThrows(IllegalArgumentException.class , ()-> service.findBookById(findBookById));
 
-     }
+    }
+
+     @ParameterizedTest
+     @NullAndEmptySource
+     @ValueSource(strings = {"   "})
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianUpdatesBookByPassingBlankAuthor_ItThrowAnException(String author) {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setTitle("Romeo and Juliet");
+        updateBook.setAuthor(author);
+
+        assertThrows(IllegalArgumentException.class , ()-> service.updateBook(updateBook));
+
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianUpdatesBookByPassingBlankTitle_ItThrowAnException(String title) {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setAuthor(title);
+
+        assertThrows(IllegalArgumentException.class , ()-> service.updateBook(updateBook));
+
+    }
+
+     @ParameterizedTest
+     @NullAndEmptySource
+     @ValueSource(strings = {"   "})
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianUpdatesBookByPassingBlankCategory_ItThrowAnException(String category) {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setTitle("Romeo and Juliet");
+        updateBook.setAuthor("Musa leee");
+        updateBook.setCategory(category);
+
+        assertThrows(IllegalArgumentException.class , ()-> service.updateBook(updateBook));
+
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   "})
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianUpdatesBookByPassingBlankDescription_ItUpdates(String description) {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setTitle("Romeo and Juliet");
+        updateBook.setAuthor("Musa leee");
+        updateBook.setCategory("For Business");
+        updateBook.setDescription(description);
+
+        UpdateBookResponse bookResponse = service.updateBook(updateBook);
+
+        FindBookByIdRequest findBookByIdRequest = new FindBookByIdRequest();
+        findBookByIdRequest.setId(bookResponse.getId());
+
+        FindBookByIdResponse found = service.findBookById(findBookByIdRequest);
+
+        assertEquals(1, bookRepository.count());
+        assertEquals(found.getTitle() , bookResponse.getTitle());
+
+    }
+
+    @Test
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianUpdatesBook_ItUpdates() {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setTitle("Romeo and Juliet");
+        updateBook.setAuthor("Musa leee");
+        updateBook.setCategory("For Business");
+        updateBook.setDescription("description");
+
+        UpdateBookResponse bookResponse = service.updateBook(updateBook);
+
+        FindBookByIdRequest findBookByIdRequest = new FindBookByIdRequest();
+        findBookByIdRequest.setId(bookResponse.getId());
+
+        FindBookByIdResponse found = service.findBookById(findBookByIdRequest);
+
+        assertEquals(1, bookRepository.count());
+        assertEquals(found.getTitle() , bookResponse.getTitle());
+        assertEquals(found.getAuthor() , bookResponse.getAuthor());
+        assertEquals(found.getCategory() , bookResponse.getCategory());
+
+    }
+
+    @Test
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianWantsToUpdateAuthorName_ItIsUpdated() {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setAuthor("Musa leee");
+
+        UpdateBookResponse bookResponse = service.patchBook(updateBook);
+
+        FindBookByIdRequest findBook = new FindBookByIdRequest();
+        findBook.setId(bookResponse.getId());
+
+        FindBookByIdResponse found = service.findBookById(findBook);
+
+        assertEquals(1, bookRepository.count());
+        assertEquals(bookResponse.getAuthor() , found.getAuthor());
+        assertNotEquals(addResponse.getAuthor() , bookResponse.getAuthor());
+
+    }
+
+    @Test
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianWantsToUpdateTitle_ItIsUpdated() {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setTitle("Mechanical Book");
+
+        UpdateBookResponse bookResponse = service.patchBook(updateBook);
+
+        FindBookByIdRequest findBook = new FindBookByIdRequest();
+        findBook.setId(bookResponse.getId());
+
+        FindBookByIdResponse found = service.findBookById(findBook);
+
+        assertEquals(1, bookRepository.count());
+        assertEquals(bookResponse.getTitle() , found.getTitle());
+        assertNotEquals(addResponse.getTitle() , bookResponse.getTitle());
+
+    }
+
+    @Test
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianWantsToUpdateCategory_ItIsUpdated() {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setCategory("Art Works");
+
+        UpdateBookResponse bookResponse = service.patchBook(updateBook);
+
+        FindBookByIdRequest findBook = new FindBookByIdRequest();
+        findBook.setId(bookResponse.getId());
+
+        FindBookByIdResponse found = service.findBookById(findBook);
+
+        assertEquals(1, bookRepository.count());
+        assertEquals(bookResponse.getCategory() , found.getCategory());
+        assertNotEquals(addResponse.getCategory() , bookResponse.getCategory());
+
+    }
+
+    @Test
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianWantsToUpdateDescription_ItIsUpdated() {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setDescription("For guys aove 18yrs of age");
+
+        UpdateBookResponse bookResponse = service.patchBook(updateBook);
+
+        FindBookByIdRequest findBook = new FindBookByIdRequest();
+        findBook.setId(bookResponse.getId());
+
+        FindBookByIdResponse found = service.findBookById(findBook);
+
+        assertEquals(1, bookRepository.count());
+        assertEquals(bookResponse.getDescription() , found.getDescription());
+        assertNotEquals(addResponse.getDescription() , bookResponse.getDescription());
+
+    }
+
+    @Test
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianWantsToUpdateDescriptionAndTitle_ItIsUpdated() {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setTitle("Mechanical Book");
+        updateBook.setDescription("For guys aove 18yrs of age");
+
+        UpdateBookResponse bookResponse = service.patchBook(updateBook);
+
+        FindBookByIdRequest findBook = new FindBookByIdRequest();
+        findBook.setId(bookResponse.getId());
+
+        FindBookByIdResponse found = service.findBookById(findBook);
+
+        assertEquals(1, bookRepository.count());
+        assertEquals(bookResponse.getDescription() , found.getDescription());
+        assertNotEquals(addResponse.getDescription() , bookResponse.getDescription());
+
+        assertEquals(bookResponse.getTitle() , found.getTitle());
+        assertNotEquals(addResponse.getTitle() , bookResponse.getTitle());
+
+    }
+
+    @Test
+    public void testThatLibrarianAddsBook_BookIsAdded_LibrarianWantsToUpdateDescriptionTitleAndAuthor_ItIsUpdated() {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse addResponse = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+
+        UpdateBookRequest updateBook = new UpdateBookRequest();
+        updateBook.setId(addResponse.getId());
+        updateBook.setTitle("Mechanical Book");
+        updateBook.setAuthor("Musa leee");
+        updateBook.setDescription("For guys aove 18yrs of age");
+
+        UpdateBookResponse bookResponse = service.patchBook(updateBook);
+
+        FindBookByIdRequest findBook = new FindBookByIdRequest();
+        findBook.setId(bookResponse.getId());
+
+        FindBookByIdResponse found = service.findBookById(findBook);
+
+        assertEquals(1, bookRepository.count());
+        assertEquals(bookResponse.getDescription() , found.getDescription());
+        assertNotEquals(addResponse.getDescription() , bookResponse.getDescription());
+
+        assertEquals(bookResponse.getTitle() , found.getTitle());
+        assertNotEquals(addResponse.getTitle() , bookResponse.getTitle());
+
+        assertEquals(bookResponse.getAuthor() , found.getAuthor());
+        assertNotEquals(addResponse.getAuthor() , bookResponse.getAuthor());
+
+    }
+
+    @Test
+    public void testThatLibrarianIsLoggedIn_LibrarianAddThreeBooks_BookIsAdded_LibrarianFindsAllBook_BookIsFound() {
+        assertTrue(loginResponse.isLoggedIn());
+
+        bookRepository.deleteAll();
+        AddBookRequest add = new AddBookRequest();
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Clean Code");
+        add.setAuthor("Robert C Martins");
+        add.setCategory("Software");
+        add.setDescription("For seniors engineers");
+        add.setTotalCopies(5);
+
+        AddBookResponse book = service.addBook(add);
+        assertEquals(1, bookRepository.count());
+        assertEquals("Clean Code", book.getTitle());
+
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Money bank");
+        add.setAuthor("Ariyo Ryan");
+        add.setCategory("Business");
+        add.setDescription("For begineers in business");
+        add.setTotalCopies(2);
+        AddBookResponse newBook = service.addBook(add);
+        assertEquals(2, bookRepository.count());
+        assertEquals("Money bank", newBook.getTitle());
+
+
+        add.setUsernameOrEmail("libra_09");
+        add.setTitle("Music life");
+        add.setAuthor("Dj Melvin");
+        add.setCategory("Music");
+        add.setDescription("");
+        add.setTotalCopies(15);
+
+        AddBookResponse myBook = service.addBook(add);
+        assertEquals(3, bookRepository.count());
+        assertEquals("Music life", myBook.getTitle());
+
+        FindAllBookResponse findBook = service.findAllBook();
+
+        BookResponse firstBook = findBook.getBooks().get(0);
+        BookResponse secondBook = findBook.getBooks().get(1);
+        BookResponse thirdBook = findBook.getBooks().get(2);
+
+        assertEquals(book.getTitle() ,  firstBook.getTitle());
+        assertEquals(book.getAuthor() ,  firstBook.getAuthor());
+        assertEquals(book.getId() ,  firstBook.getBookId());
+
+        assertEquals(newBook.getTitle() ,  secondBook.getTitle());
+        assertEquals(newBook.getAuthor() ,  secondBook.getAuthor());
+        assertEquals(newBook.getId() ,  secondBook.getBookId());
+
+        assertEquals(myBook.getTitle() ,  thirdBook.getTitle());
+        assertEquals(myBook.getAuthor() ,  thirdBook.getAuthor());
+        assertEquals(myBook.getId() ,  thirdBook.getBookId());
+
+    }
+
+
 }

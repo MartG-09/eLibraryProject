@@ -4,10 +4,7 @@ import ng.martG.eLibrary.data.models.Book;
 import ng.martG.eLibrary.data.models.BookStatus;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.AddBookRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.UpdateBookRequest;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.AddBookResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.DeleteBookResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.FindBookByIdResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.UpdateBookResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.*;
 
 public class BookMapper {
 
@@ -83,6 +80,37 @@ public class BookMapper {
         book.setAuthor(bookRequest.getAuthor());
         book.setCategory(bookRequest.getCategory());
         book.setDescription(bookRequest.getDescription());
+
+    }
+
+    public static void mapToPatchBookRequest(UpdateBookRequest request , Book book) {
+        if (request.getTitle() != null && !request.getTitle().isBlank())
+            book.setTitle(request.getTitle());
+
+        if (request.getAuthor() != null && !request.getAuthor().isBlank())
+            book.setAuthor(request.getAuthor());
+
+        if (request.getCategory() != null && !request.getCategory().isBlank())
+            book.setCategory(request.getCategory());
+
+        if (request.getDescription() != null && !request.getDescription().isBlank())
+            book.setDescription(request.getDescription());
+
+    }
+
+    public static BookResponse mapToBookResponse(Book book) {
+        BookResponse response = new BookResponse();
+
+        response.setBookId(book.getId());
+        response.setAuthor(book.getAuthor());
+        response.setTitle(book.getTitle());
+        response.setCategory(book.getCategory());
+        response.setDescription(book.getDescription());
+        response.setTotalCopies(book.getTotalCopies());
+        response.setAvailableCopies(book.getAvailableCopies());
+        response.setBookStatus(book.getStatus());
+
+        return response;
 
     }
 

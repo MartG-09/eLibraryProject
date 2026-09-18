@@ -4,10 +4,7 @@ import ng.martG.eLibrary.dtos.requests.librarianRequest.AddBookRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.DeleteBookRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.FindBookByIdRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.UpdateBookRequest;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.AddBookResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.DeleteBookResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.FindBookByIdResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.UpdateBookResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.*;
 
 public interface LibrarianService {
 
@@ -15,5 +12,8 @@ public interface LibrarianService {
     DeleteBookResponse deleteBook(DeleteBookRequest request);
     FindBookByIdResponse findBookById(FindBookByIdRequest request);
     UpdateBookResponse updateBook(UpdateBookRequest request);
+    UpdateBookResponse patchBook(UpdateBookRequest request);
+    FindAllBookResponse findAllBook();
+
 
 }

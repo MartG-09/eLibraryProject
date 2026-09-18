@@ -9,16 +9,14 @@ import ng.martG.eLibrary.dtos.requests.librarianRequest.AddBookRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.DeleteBookRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.FindBookByIdRequest;
 import ng.martG.eLibrary.dtos.requests.librarianRequest.UpdateBookRequest;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.AddBookResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.DeleteBookResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.FindBookByIdResponse;
-import ng.martG.eLibrary.dtos.responses.librarianResponse.UpdateBookResponse;
+import ng.martG.eLibrary.dtos.responses.librarianResponse.*;
 import ng.martG.eLibrary.utils.librarianMappers.BookMapper;
 import ng.martG.eLibrary.utils.validator.ValidateAddBookRequest;
-import ng.martG.eLibrary.utils.validator.ValidateLibrarianRequest;
 import ng.martG.eLibrary.utils.validator.ValidateUpdateBookRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -98,6 +96,38 @@ public class LibrarianServiceImpl implements LibrarianService {
         bookRepository.save(book);
 
         return BookMapper.mapToUpdateBookResponse(book);
+    }
+
+    @Override
+    public UpdateBookResponse patchBook(UpdateBookRequest request) {
+        Optional<Book> existingBook = bookRepository.findById(request.getId());
+
+        if (existingBook.isEmpty())
+            throw new IllegalArgumentException("Book not found");
+
+        Book book = existingBook.get();
+        BookMapper.mapToPatchBookRequest(request , book);
+
+        bookRepository.save(book);
+
+        return BookMapper.mapToUpdateBookResponse(book);
+
+    }
+
+    @Override
+    public FindAllBookResponse findAllBook() {
+        List<Book> books =  bookRepository.findAll();
+
+        List<BookResponse> bookResponses = new ArrayList<>();
+
+        for (Book book : books) {
+            bookResponses.add(BookMapper.mapToBookResponse(book));
+        }
+
+        FindAllBookResponse findAll = new FindAllBookResponse();
+        findAll.setBooks(bookResponses);
+
+        return findAll;
     }
 
 }

@@ -10,6 +10,9 @@ import ng.martG.eLibrary.dtos.responses.authReader.RegisterReaderResponse;
 import ng.martG.eLibrary.services.auth.AuthReaderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -134,11 +137,13 @@ public class AuthReaderServiceTest {
 
     }
 
-    @Test
-    public  void testThatAReaderRegistersInputingBlankValueInFullname_ReaderIsNotRegister() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public  void testThatAReaderRegistersInputingBlankValueInFullname_ReaderIsNotRegister(String fullname) {
         readerRepository.deleteAll();
         RegisterReaderRequest register = new RegisterReaderRequest();
-        register.setFullName("");
+        register.setFullName(fullname);
         register.setUsername("martg_09");
         register.setPassword("correct");
         register.setEmail("ajulogbemi09@gmail.com");
@@ -148,12 +153,14 @@ public class AuthReaderServiceTest {
         assertEquals(0 , readerRepository.count());
     }
 
-    @Test
-    public  void testThatAReaderRegistersInputingBlankValueInUsername_ReaderIsNotRegister() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public  void testThatAReaderRegistersInputingBlankValueInUsername_ReaderIsNotRegister(String username) {
         readerRepository.deleteAll();
         RegisterReaderRequest register = new RegisterReaderRequest();
         register.setFullName("Heaven kay");
-        register.setUsername("   ");
+        register.setUsername(username);
         register.setPassword("correct");
         register.setEmail("ajulogbemi09@gmail");
 
@@ -163,13 +170,15 @@ public class AuthReaderServiceTest {
 
     }
 
-    @Test
-    public  void testThatAReaderRegistersInputingBlankValueInPassword_ReaderIsNotRegister() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public  void testThatAReaderRegistersInputingBlankValueInPassword_ReaderIsNotRegister(String password) {
         readerRepository.deleteAll();
         RegisterReaderRequest register = new RegisterReaderRequest();
         register.setFullName("Heaven kay");
         register.setUsername("maht_j");
-        register.setPassword("");
+        register.setPassword(password);
         register.setEmail("ajulogbemi09@gmail");
 
         assertThrows(IllegalArgumentException.class , () -> service.registerReader(register));
@@ -178,14 +187,16 @@ public class AuthReaderServiceTest {
 
     }
 
-    @Test
-    public  void testThatAReaderRegistersInputingBlankValueInEmail_ReaderIsNotRegister() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public  void testThatAReaderRegistersInputingBlankValueInEmail_ReaderIsNotRegister(String email) {
         readerRepository.deleteAll();
         RegisterReaderRequest register = new RegisterReaderRequest();
         register.setFullName("Heaven kay");
         register.setUsername("maht_j");
         register.setPassword("correct");
-        register.setEmail("  ");
+        register.setEmail(email);
 
         assertThrows(IllegalArgumentException.class , () -> service.registerReader(register));
 
@@ -193,27 +204,31 @@ public class AuthReaderServiceTest {
 
     }
 
-    @Test
-    public void testThatReaderLoginWithBlankEmailOrUsernameAndPassword_ReaderIsNotLoggedin() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public void testThatReaderLoginWithBlankEmailOrUsernameAndPassword_ReaderIsNotLoggedin(String usernameOrEmail) {
         service.registerReader(register);
 
         LoginReaderRequest login = new LoginReaderRequest();
 
-        login.setUsernameOrEmail("");
+        login.setUsernameOrEmail(usernameOrEmail);
         login.setPassword("correct");
 
         assertThrows(IllegalArgumentException.class ,()-> service.loginReader(login));
 
     }
 
-    @Test
-    public void testThatReaderLoginWithUsernameAndBlankPassword_ReaderIsLoggedin() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public void testThatReaderLoginWithUsernameAndBlankPassword_ReaderIsLoggedin(String password) {
         service.registerReader(register);
 
         LoginReaderRequest login = new LoginReaderRequest();
 
         login.setUsernameOrEmail("martg_09");
-        login.setPassword("   ");
+        login.setPassword(password);
 
         assertThrows(IllegalArgumentException.class ,()-> service.loginReader(login));
 
@@ -306,8 +321,10 @@ public class AuthReaderServiceTest {
 
     }
 
-    @Test
-    public void testThatReaderLogin_ReaderIsLoggedIn_ReaderLogoutWithBlankEmailOrUsername_ReaderIsLoggedOut() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  "})
+    public void testThatReaderLogin_ReaderIsLoggedIn_ReaderLogoutWithBlankEmailOrUsername_ReaderIsLoggedOut(String usernameOrEmail) {
         service.registerReader(register);
 
         LoginReaderRequest login = new LoginReaderRequest();
@@ -319,7 +336,7 @@ public class AuthReaderServiceTest {
         assertTrue(response.isLoggedIn());
 
         LogoutReaderRequest logout = new LogoutReaderRequest();
-        logout.setUsernameOrEmail("");
+        logout.setUsernameOrEmail(usernameOrEmail);
 
         assertThrows(IllegalArgumentException.class , ()-> service.logoutReader(logout));
 
