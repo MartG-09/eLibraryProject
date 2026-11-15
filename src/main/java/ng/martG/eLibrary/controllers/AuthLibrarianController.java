@@ -8,6 +8,8 @@ import ng.martG.eLibrary.dtos.responses.authLibrarian.LoginLibrarianResponse;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.LogoutLibrarianResponse;
 import ng.martG.eLibrary.dtos.responses.authLibrarian.RegisterLibrarianResponse;
 import ng.martG.eLibrary.services.auth.AuthLibrarianService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,18 +23,18 @@ public class AuthLibrarianController {
     private final AuthLibrarianService librarianService;
 
     @PostMapping("/register")
-    public RegisterLibrarianResponse registerLibrarian(@RequestBody RegisterLibrarianRequest librarianRequest) {
-        return librarianService.registerLibrarian(librarianRequest);
+    public ResponseEntity<RegisterLibrarianResponse> registerLibrarian(@RequestBody RegisterLibrarianRequest librarianRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(librarianService.registerLibrarian(librarianRequest));
     }
 
     @PostMapping("/login")
-    public LoginLibrarianResponse loginLibrarian(@RequestBody LoginLibrarianRequest librarianRequest) {
-        return librarianService.loginLibrarian(librarianRequest);
+    public ResponseEntity<LoginLibrarianResponse> loginLibrarian(@RequestBody LoginLibrarianRequest librarianRequest) {
+        return ResponseEntity.ok(librarianService.loginLibrarian(librarianRequest));
     }
 
     @PostMapping("/logout")
-    public LogoutLibrarianResponse logoutLibrarian(@RequestBody LogoutLibrarianRequest librarianRequest) {
-        return librarianService.logoutLibrarian(librarianRequest);
+    public ResponseEntity<LogoutLibrarianResponse> logoutLibrarian(@RequestBody LogoutLibrarianRequest librarianRequest) {
+        return ResponseEntity.ok(librarianService.logoutLibrarian(librarianRequest));
     }
 
 }
